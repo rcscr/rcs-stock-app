@@ -1,0 +1,75 @@
+services:
+  mysqldb-it:
+    image: mysql:8.0.22
+    container_name: mysqldb-it
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: example
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql-data-it:/var/lib/mysql
+    networks:
+      - mysql-network-it
+
+  mongodb-it:
+    image: mongo:4.4.3
+    container_name: mongodb-it
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data-it:/data/db
+    networks:
+      - mongo-network-it
+
+  auth-service-it:
+    container_name: rcs-auth-service
+    build:
+      context: .
+      dockerfile: DockerfileWithDependency
+      args:
+        DEPENDENCY: auth-api
+        SERVICE: auth-service
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysqldb-it
+    networks:
+      - mysql-network-it
+      - mongo-network-it
+    restart: on-failure
+    environment:
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: password
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysqldb-it:3306/auth?allowPublicKeyRetrieval=true&useSSL=false&createDatabaseIfNotExist=true
+
+  stock-service-it-tests:
+    container_name: stock-service-it-tests
+    build:
+      context: .
+      dockerfile: DockerfileWithDependencyIT
+      args:
+        DEPENDENCY: auth-api
+        SERVICE: stock-service
+    ports:
+      - target: 7171
+        published: 7171
+        protocol: tcp
+    depends_on:
+      - mongodb-it
+      - auth-service-it
+    networks:
+      - mongo-network-it
+    env_file:
+      - stock-service/.env
+    environment:
+      SERVICES_AUTH_BASE_URL: http://auth-service-it:8080
+      SPRING_DATA_MONGODB_URL: mongodb://mongodb-it:27017/stocks
+
+volumes:
+  mysql-data-it:
+  mongo-data-it:
+
+networks:
+  mysql-network-it:
+  mongo-network-it:

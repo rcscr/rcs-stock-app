@@ -1,0 +1,30 @@
+FROM maven:3.9.7-eclipse-temurin-22 AS BUILD-DEPENDENCY
+
+ARG DEPENDENCY
+
+WORKDIR /usr/src/rcs/${DEPENDENCY}
+COPY ${DEPENDENCY}/pom.xml .
+COPY ${DEPENDENCY}/src ./src
+RUN mvn clean package
+
+FROM maven:3.9.7-eclipse-temurin-22 AS BUILD-SERVICE
+
+ARG DEPENDENCY
+ARG SERVICE
+ENV DEPENDENCY=${DEPENDENCY}
+
+WORKDIR /usr/src/rcs/${SERVICE}
+COPY ${SERVICE}/pom.xml .
+COPY ${SERVICE}/src ./src
+COPY --from=BUILD-DEPENDENCY /usr/src/rcs/${DEPENDENCY}/target/${DEPENDENCY}-1.0-SNAPSHOT.jar ./${DEPENDENCY}-1.0-SNAPSHOT.jar
+RUN mvn install:install-file -Dfile=${DEPENDENCY}-1.0-SNAPSHOT.jar -DgroupId=com.rcs -DartifactId=${DEPENDENCY} -Dversion=1.0-SNAPSHOT -Dpackaging=jar
+RUN mvn clean package
+
+FROM maven:3.9.7-eclipse-temurin-22
+
+ARG SERVICE
+ENV SERVICE=${SERVICE}
+
+COPY --from=BUILD-SERVICE /usr/src/rcs/${SERVICE}/target/${SERVICE}-1.0-SNAPSHOT.jar ./${SERVICE}-1.0-SNAPSHOT.jar
+
+ENTRYPOINT ["sh", "-c", "java -jar ./${SERVICE}-1.0-SNAPSHOT.jar"]

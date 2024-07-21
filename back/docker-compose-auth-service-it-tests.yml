@@ -1,0 +1,40 @@
+services:
+  mysqldb-it:
+    image: mysql:8.0.22
+    container_name: mysqldb-it
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: example
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql-data-it:/var/lib/mysql
+    networks:
+      - mysql-network-it
+
+  auth-service-it-tests:
+    container_name: auth-service-it-tests
+    build:
+      context: .
+      dockerfile: DockerfileWithDependencyIT
+      args:
+        DEPENDENCY: auth-api
+        SERVICE: auth-service
+    ports:
+      - target: 7070
+        published: 7070
+        protocol: tcp
+    depends_on:
+      - mysqldb-it
+    networks:
+      - mysql-network-it
+    environment:
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: password
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysqldb-it:3306/my-service?allowPublicKeyRetrieval=true&useSSL=false&createDatabaseIfNotExist=true
+
+volumes:
+  mysql-data-it:
+
+networks:
+  mysql-network-it:
