@@ -4,6 +4,7 @@ A fullstack application for discovering stocks and subscribing to real-time pric
 
 Features:
 
+- Unit and integration tests
 - Authentication
 - WebSockets
 - Searching for stocks
