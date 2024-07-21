@@ -1,0 +1,14 @@
+# dependencies
+/node_modules
+
+# production build
+/build
+
+# testing
+/coverage
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+front.iml

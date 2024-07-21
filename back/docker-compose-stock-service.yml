@@ -1,0 +1,37 @@
+services:
+  mongodb-stock:
+    image: mongo:4.4.3
+    container_name: mongodb-stock
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-stock-data:/data/db
+    networks:
+      - stock-app-network
+
+  stock-service:
+    container_name: stock-service
+    build:
+      context: .
+      dockerfile: DockerfileWithDependency
+      args:
+        DEPENDENCY: auth-api
+        SERVICE: stock-service
+    ports:
+      - "8081:8081"
+    depends_on:
+      - mongodb-stock
+    networks:
+      - stock-app-network
+    restart: on-failure
+    env_file:
+      - stock-service/.env
+    environment:
+      SERVICES_AUTH_BASE_URL: http://auth-service:8080
+      SPRING_DATA_MONGODB_URL: mongodb://mongodb-stock:27017/stocks
+
+volumes:
+  mongo-stock-data:
+
+networks:
+  stock-app-network:
