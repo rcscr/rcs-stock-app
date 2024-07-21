@@ -102,8 +102,8 @@ Do:
 
 For each:
 - `front/` (whole directory)
-- `back/auth/pom.xml`
 - `back/auth-api/pom.xml`
+- `back/auth-service/pom.xml`
 - `back/stock-service/pom.xml`
 
 Then, to access the Docker files in `back/`, you need to use the "Project Files" view. It's not perfect, but it's one way to keep the entire project in one IDE window.
