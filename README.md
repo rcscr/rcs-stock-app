@@ -1,6 +1,6 @@
 ## RCS Stocks
 
-An application for following live stock prices. 
+A fullstack application for discovering stocks and subscribing to real-time price updates
 
 Features:
 
