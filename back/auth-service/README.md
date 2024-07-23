@@ -4,7 +4,7 @@
 #### Build & run
 
 <pre>
-cd .. && docker-compose -f docker-compose-stock-service.yml up --build
+cd .. && docker-compose -f docker-compose-auth-service.yml up --build
 </pre>
 
 The Docker files are stored in the parent folder so that it has access to the `auth-api` module.
