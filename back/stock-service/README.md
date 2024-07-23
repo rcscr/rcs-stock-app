@@ -3,7 +3,7 @@
 #### Build & run
 
 <pre>
-docker-compose up --build
+cd .. && docker-compose -f docker-compose-stock-service.yml
 </pre>
 
 <hr>
