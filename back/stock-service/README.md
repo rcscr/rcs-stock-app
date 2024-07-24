@@ -3,8 +3,10 @@
 #### Build & run
 
 <pre>
-docker-compose up --build
+cd .. && docker-compose -f docker-compose-stock-service.yml
 </pre>
+
+The Docker files are stored in the parent folder so that it has access to the auth-api module
 
 <hr>
 
