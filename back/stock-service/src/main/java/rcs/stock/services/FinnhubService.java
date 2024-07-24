@@ -44,6 +44,7 @@ public class FinnhubService {
             return Stream.concat(
                     Stream.of(symbol.toLowerCase()),
                     Arrays.stream(description.toLowerCase().split(" ")))
+                    .filter(s -> !s.isBlank())
                     .collect(Collectors.toSet());
         }
     }
@@ -96,7 +97,7 @@ public class FinnhubService {
 
     public List<StockResponse> searchStocks(String search, int limit) {
         return stocksSearchableMap
-                .searchBySubstring(search.toLowerCase(), search.length() > 3 ? search.length() - 1 : search.length())
+                .searchBySubstringFuzzy(search.toLowerCase(), search.length() > 3 ? 1 : 0)
                 .stream()
                 .limit(limit)
                 .collect(Collectors.toList());

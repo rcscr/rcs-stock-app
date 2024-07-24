@@ -13,7 +13,7 @@ Features:
 
 #### Tech stack
 
-Backend: Java, SpringBoot, MySQL, MongoDB
+Backend: Java, Kotlin, SpringBoot, MySQL, MongoDB
 
 Frontend: React, TypeScript, Redux
 

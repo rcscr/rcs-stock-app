@@ -47,10 +47,7 @@ services:
     container_name: stock-service-it-tests
     build:
       context: .
-      dockerfile: DockerfileWithDependencyIT
-      args:
-        DEPENDENCY: auth-api
-        SERVICE: stock-service
+      dockerfile: DockerfileStockServiceIT
     ports:
       - target: 7171
         published: 7171

@@ -32,9 +32,9 @@ public class SearchableMapTest {
         target.put(2, dummy2);
 
         // Act
-        List<Dummy> resultA = target.searchBySubstring("abc", 2);
-        List<Dummy> resultB = target.searchBySubstring("mn0", 2);
-        List<Dummy> resultC = target.searchBySubstring("pqr", 2);
+        List<Dummy> resultA = target.searchBySubstringFuzzy("abc", 1);
+        List<Dummy> resultB = target.searchBySubstringFuzzy("mn0", 1);
+        List<Dummy> resultC = target.searchBySubstringFuzzy("pqr", 1);
 
         // Assert
         assertThat(resultA).containsExactly(dummy1, dummy2);

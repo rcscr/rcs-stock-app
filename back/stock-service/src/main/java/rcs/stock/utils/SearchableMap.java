@@ -1,5 +1,9 @@
 package rcs.stock.utils;
 
+import com.rcs.trie.FuzzyMatchingStrategy;
+import com.rcs.trie.Trie;
+import com.rcs.trie.TrieSearchResult;
+
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -28,10 +32,10 @@ public class SearchableMap<K, V> {
         return map.get(key);
     }
 
-    public List<V> searchBySubstring(String search, int minLength) {
-        return trie.matchBySubstring(search, minLength)
+    public List<V> searchBySubstringFuzzy(String search, int errorTolerance) {
+        return trie.matchBySubstringFuzzy(search, errorTolerance, FuzzyMatchingStrategy.LIBERAL)
                 .stream()
-                .map(Trie.SearchResult::value)
+                .map(TrieSearchResult::getValue)
                 .flatMap(Collection::stream)
                 .distinct()
                 .map(map::get)
@@ -47,7 +51,8 @@ public class SearchableMap<K, V> {
     private void addIndex(V value, K key) {
         searchTermsExtractor.apply(value)
                 .forEach(searchTerm -> {
-                    Set<K> newKeys = trie.getExactly(searchTerm).orElse(new HashSet<>());
+                    Set<K> newKeys = Optional.ofNullable(trie.getExactly(searchTerm))
+                            .orElse(new HashSet<>());
                     newKeys.add(key);
                     trie.put(searchTerm, newKeys);
                 });

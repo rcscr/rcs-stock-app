@@ -13,10 +13,7 @@ services:
     container_name: stock-service
     build:
       context: .
-      dockerfile: DockerfileWithDependency
-      args:
-        DEPENDENCY: auth-api
-        SERVICE: stock-service
+      dockerfile: DockerfileStockService
     ports:
       - "8081:8081"
     depends_on:

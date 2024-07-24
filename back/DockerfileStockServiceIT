@@ -1,0 +1,27 @@
+FROM maven:3.9.7-eclipse-temurin-22 AS BUILD-AUTH-API
+
+WORKDIR /usr/src/rcs/auth-api
+COPY auth-api/pom.xml .
+COPY auth-api/src ./src
+RUN mvn clean package
+
+FROM maven:3.9.7-eclipse-temurin-22 AS BUILD-TRIE
+
+WORKDIR /usr/src/rcs/trie
+COPY trie/pom.xml .
+COPY trie/src ./src
+RUN mvn clean package
+
+FROM maven:3.9.7-eclipse-temurin-22 AS BUILD-SERVICE
+
+WORKDIR /usr/src/rcs/stock-service
+COPY stock-service/pom.xml .
+COPY stock-service/src ./src
+
+COPY --from=BUILD-AUTH-API /usr/src/rcs/auth-api/target/auth-api-1.0-SNAPSHOT.jar ./auth-api-1.0-SNAPSHOT.jar
+COPY --from=BUILD-TRIE /usr/src/rcs/trie/target/trie-1.0-SNAPSHOT.jar ./trie-1.0-SNAPSHOT.jar
+
+RUN mvn install:install-file -Dfile=auth-api-1.0-SNAPSHOT.jar -DgroupId=com.rcs -DartifactId=auth-api -Dversion=1.0-SNAPSHOT -Dpackaging=jar
+RUN mvn install:install-file -Dfile=trie-1.0-SNAPSHOT.jar -DgroupId=com.rcs -DartifactId=trie -Dversion=1.0-SNAPSHOT -Dpackaging=jar
+
+ENTRYPOINT ["mvn", "clean", "install", "-Pintegration-tests"]

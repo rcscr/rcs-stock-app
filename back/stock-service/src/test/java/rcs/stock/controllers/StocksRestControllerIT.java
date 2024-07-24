@@ -14,7 +14,10 @@ import rcs.stock.services.FinnhubService;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -110,15 +113,16 @@ public class StocksRestControllerIT {
         // Arrange
 
         // Act
-        List<FinnhubService.StockResponse> results = target.searchStocks("apple", 1000);
+        List<FinnhubService.StockResponse> results = target.searchStocks("apple", 10);
 
         // Assert
-        results.forEach(result -> {
-            boolean somethingMatched = Stream.of(result.symbol(), result.description())
-                    .map(String::toLowerCase)
-                    .anyMatch(searchableTerm -> searchableTerm.contains("appl"));
-            assertThat(somethingMatched).isTrue();
-        });
+        Set<String> searchTerms = results.stream()
+                .flatMap(result -> Stream.of(result.symbol(), result.description()))
+                .flatMap(term -> Arrays.stream(term.split(" ")))
+                .map(String::toLowerCase)
+                .collect(Collectors.toSet());
+
+        assertThat(searchTerms).contains("apple");
     }
 
     private HttpServletRequest getAuthenticatedRequest() {
