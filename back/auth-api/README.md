@@ -17,11 +17,5 @@ mvn clean install
         <artifactId>auth-api</artifactId>
         <version>1.0-SNAPSHOT</version>
     </dependency>
-    
-    <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-security</artifactId>
-        <version>2.7.18</version>
-    </dependency>
 </dependencies>
 ```
