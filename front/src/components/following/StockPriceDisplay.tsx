@@ -1,9 +1,9 @@
+import { useEffect, useState, useCallback } from "react";
 import SockJsClient from 'react-stomp';
 import StockService, { StockPrice } from "../../services/StockService";
 import { faArrowUp, faArrowDown, faTimes } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import StoreManager from "../../store/StoreManager";
-import { useEffect, useState } from "react";
 import LoadingText from '../utils/LoadingText';
 
 interface Props {
@@ -40,17 +40,17 @@ export default function StockPriceDisplay(props: Props) {
     asyncWaitForAnimation();
   }, [ stockPriceClass ]);
 
-  const onUpdate = (update: StockPrice) => {
+  const onUpdate = useCallback((update: StockPrice) => {
     // only set animation if this is an update, not a first time fetch
     if (stock) {
       setStockPriceClass('received-update');
     }
     setStock(update as StockPrice);
-  }
+  }, [ stock ])
 
-  const handleUnfollow = async () => {
+  const handleUnfollow = useCallback(async () => {
     storeManager.setUserInfo(await stockService.unfollowStock(stock.symbol));
-  }
+  }, [ storeManager, stockService, stock ]);
 
   return <div className="stock-price-display">
     <SockJsClient 

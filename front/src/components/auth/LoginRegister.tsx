@@ -1,6 +1,6 @@
+import { useEffect, useState, useCallback } from "react";
 import StoreManager from "../../store/StoreManager";
 import AuthService from "../../services/AuthService";
-import { useEffect, useState } from "react";
 import UserCredentialsForm from "./UserCredentialsForm";
 import Header from "../utils/Header";
 import StockService from "../../services/StockService";
@@ -28,12 +28,12 @@ export default function LoginRegister(props: Props) {
     }
   }, [ loginError ]);
 
-  const handleLogin = (username, password) => {
+  const handleLogin = useCallback((username, password) => {
     authService.login(username, password)
       .then(success => {
         setLoginError(!success);
       });
-  }
+  }, [ authService ]);
 
   const handleRegister = (username, password) => {
     if (password.length < 8) {
