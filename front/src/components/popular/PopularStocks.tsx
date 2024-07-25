@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import StockService, { StockPrice, StockWithFollowers } from "../../services/StockService";
+import StockService, { StockWithFollowers } from "../../services/StockService";
 import StoreManager from "../../store/StoreManager";
 import Header from "../utils/Header";
 import StockWithFollowersDisplay from "./StockWithFollowersDisplay";
