@@ -1,6 +1,6 @@
 import { UserInfo } from "./types";
 
-export default class StockAppManager {
+export default class StoreManager {
 
   private readonly store;
 
